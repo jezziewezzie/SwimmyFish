@@ -1,130 +1,72 @@
 package edu.highline.swimmyfish;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.util.Iterator;
+import static edu.highline.swimmyfish.SwimmyFish.WORLD_HEIGHT;
+import static edu.highline.swimmyfish.SwimmyFish.WORLD_WIDTH;
 
 public class GameScreen implements Screen {
     private final SwimmyFish game;
-    private final OrthographicCamera camera;
-    private final Vector3 touchPos;
-    private final Texture dropImage;
-    private final Texture bucketImage;
-    private final Sound dropSound;
-    private final Music rainMusic;
-    private final Rectangle bucket;
-    private final Array<Rectangle> raindrops;
-    private long lastDropTime;
-    private int dropsGathered;
+
+    private final Stage stage;
+    private final Player player;
 
     public GameScreen(final SwimmyFish game) {
         this.game = game;
+        stage = new Stage(new FitViewport(WORLD_WIDTH, WORLD_HEIGHT));
+        player = new Player();
+        stage.addActor(player);
+        stage.setKeyboardFocus(player);
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
-        touchPos = new Vector3();
+        player.setPosition(30, (float) WORLD_HEIGHT / 2);
 
-        //64x64 pixels
-        dropImage = new Texture(Gdx.files.internal("droplet.png"));
-        bucketImage = new Texture(Gdx.files.internal("bucket.png"));
+        MoveByAction jump = Actions.action(MoveByAction.class);
 
-        dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-        rainMusic.setLooping(true);
+        player.addListener(new InputListener() {
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                if (character == Keys.SPACE) {
 
-        bucket = new Rectangle();
-        bucket.x = (float) ((800 / 2) - (64 / 2));
-        bucket.y = 20;
-        bucket.width = 64;
-        bucket.height = 64;
-        raindrops = new Array<>();
-
-        spawnRaindrop();
-    }
-
-    private void spawnRaindrop() {
-        Rectangle raindrop = new Rectangle();
-        raindrop.x = MathUtils.random(0, 800 - 64);
-        raindrop.y = 480;
-        raindrop.width = 64;
-        raindrop.height = 64;
-        raindrops.add(raindrop);
-        lastDropTime = TimeUtils.nanoTime();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
-    public void show() {
-        rainMusic.play();
-    }
+    public void show() {}
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0.2f, 1);
-        camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
+        ScreenUtils.clear(Color.BLACK);
 
-        game.batch.begin();
-        game.font.draw(game.batch, "Drops Collected: " + dropsGathered, 0,
-                       480);
-        game.batch.draw(bucketImage, bucket.x, bucket.y, bucket.width,
-                        bucket.height);
-        for (Rectangle raindrop : raindrops) {
-            game.batch.draw(dropImage, raindrop.x, raindrop.y);
-        }
-        game.batch.end();
+        stage.act(delta);
+        stage.draw();
 
-        if (Gdx.input.isTouched()) {
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            bucket.x = touchPos.x - (float) 64 / 2;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            bucket.x -= 200 * Gdx.graphics.getDeltaTime();
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            bucket.x += 200 * Gdx.graphics.getDeltaTime();
-        }
+        if (Gdx.input.isKeyPressed(Keys.SPACE)) {
 
-        if (bucket.x < 0) {
-            bucket.x = 0;
-        }
-        if (bucket.x > 800 - 64) {
-            bucket.x = 800 - 64;
-        }
-
-        if (TimeUtils.nanoTime() - lastDropTime > 1000000000) {
-            spawnRaindrop();
-        }
-
-        Iterator<Rectangle> iter = raindrops.iterator();
-        while (iter.hasNext()) {
-            Rectangle raindrop = iter.next();
-            raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-            if (raindrop.y + 64 < 0) {
-                iter.remove();
-            }
-            if (raindrop.overlaps(bucket)) {
-                dropsGathered++;
-                dropSound.play();
-                iter.remove();
-            }
         }
     }
 
     @Override
-    public void resize(int width, int height) {}
+    public void resize(int width, int height) {
+        //stage.getViewport().update(width, height, true);
+        //game.generateRegions(Gdx.graphics.getBackBufferWidth(),
+        //                     Gdx.graphics.getBackBufferHeight());
+    }
 
     @Override
     public void pause() {}
@@ -137,9 +79,24 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        dropImage.dispose();
-        bucketImage.dispose();
-        dropSound.dispose();
-        rainMusic.dispose();
+        stage.dispose();
+    }
+
+    class Player extends Actor {
+        TextureRegion region;
+
+        public Player() {
+            region = game.getRegion("red fish");
+            setBounds(region.getRegionX(), region.getRegionY(),
+                      region.getRegionWidth(), region.getRegionHeight());
+            System.out.println(getWidth() + "x" + getHeight());
+        }
+
+        @Override
+        public void draw(Batch batch, float ignoredParentAlpha) {
+            batch.draw(region, getX(), getY(), getOriginX(), getOriginY(),
+                       getWidth(), getHeight(), getScaleX(), getScaleY(),
+                       getRotation());
+        }
     }
 }
