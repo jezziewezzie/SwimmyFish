@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.util.ArrayList;
@@ -12,16 +13,18 @@ public class ObstacleFish extends Actor {
     private final SwimmyFish game;
     private final Texture headTexture;
     private final Texture bodyTexture;
-    private final TopOrBottom topOrBottom;
-    private Sprite headSprite;
-    private ArrayList<Sprite> bodySprites;
+    private final boolean isTop;
+    private final Sprite headSprite;
+    private final ArrayList<Sprite> bodySprites;
     private int bodySegments;
 
-    ObstacleFish(SwimmyFish game, int totalPossibleBodySegments,
-                 TopOrBottom topOrBottom)
+    public ObstacleFish(SwimmyFish game, boolean isTop,
+                        int totalPossibleBodySegments, int bodySegments,
+                        float x)
     {
         this.game = game;
-        this.topOrBottom = topOrBottom;
+        this.isTop = isTop;
+        this.bodySegments = bodySegments;
 
         headTexture =
                 new Texture(Gdx.files.internal("long tang fish head alt.png"));
@@ -33,8 +36,9 @@ public class ObstacleFish extends Actor {
                               Texture.TextureFilter.Linear);
 
         headSprite = new Sprite(headTexture);
-        if (topOrBottom == TopOrBottom.TOP) {
+        if (isTop) {
             headSprite.setRotation(180);
+            headSprite.setFlip(true, false);
         }
 
         bodySprites = new ArrayList<>();
@@ -42,14 +46,15 @@ public class ObstacleFish extends Actor {
             bodySprites.add(new Sprite(bodyTexture));
         }
 
-        setWidth(headTexture.getWidth());
+        setWidth(bodyTexture.getWidth());
+        constructFish(bodySegments, x);
     }
 
     public void constructFish(int bodySegments, float x) {
-        if (topOrBottom == TopOrBottom.BOTTOM) {
-            constructBottomFish(bodySegments, x);
-        } else {
+        if (isTop) {
             constructTopFish(bodySegments, x);
+        } else {
+            constructBottomFish(bodySegments, x);
         }
     }
 
@@ -91,6 +96,10 @@ public class ObstacleFish extends Actor {
         setY(game.stage.getHeight() - height);
     }
 
+    public Rectangle getBounds() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    }
+
     public void dispose() {
         headTexture.dispose();
         bodyTexture.dispose();
@@ -103,9 +112,5 @@ public class ObstacleFish extends Actor {
             Sprite sprite = bodySprites.get(i);
             sprite.draw(batch);
         }
-    }
-
-    public enum TopOrBottom {
-        TOP, BOTTOM
     }
 }

@@ -44,5 +44,6 @@ project(":desktop") {
 project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        implementation 'org.javatuples:javatuples:1.2'
     }
 }

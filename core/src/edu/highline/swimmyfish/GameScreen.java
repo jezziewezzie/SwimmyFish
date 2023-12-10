@@ -36,7 +36,9 @@ public class GameScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        dispose();
+    }
 
     @Override
     public void dispose() {
