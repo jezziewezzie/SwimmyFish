@@ -4,15 +4,16 @@ sourceSets.main.resources.srcDirs = ["../assets"]
 project.ext.mainClassName = "edu.highline.swimmyfish.DesktopLauncher"
 project.ext.assetsDir = new File("../assets")
 
+
 import org.gradle.internal.os.OperatingSystem
 
 tasks.register('run', JavaExec) {
     dependsOn classes
-    mainClass = project.mainClassName
+    mainClass = "edu.highline.swimmyfish.DesktopLauncher"
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    workingDir = project.assetsDir
-    ignoreExitValue = true
+    workingDir = new File("../assets")
+    ignoreExitValue = true as JavaExecSpec
 
     if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
         // Required to run on macOS
@@ -22,18 +23,18 @@ tasks.register('run', JavaExec) {
 
 tasks.register('debug', JavaExec) {
     dependsOn classes
-    mainClass = project.mainClassName
+    mainClass = "edu.highline.swimmyfish.DesktopLauncher"
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    workingDir = project.assetsDir
-    ignoreExitValue = true
-    debug = true
+    workingDir = new File("../assets")
+    ignoreExitValue = true as JavaExecSpec
+    debug = true as JavaExec
 }
 
 tasks.register('dist', Jar) {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes 'Main-Class': "edu.highline.swimmyfish.DesktopLauncher"
     }
     dependsOn configurations.runtimeClasspath
     from {
