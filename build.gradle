@@ -47,3 +47,11 @@ project(":core") {
         implementation 'org.javatuples:javatuples:1.2'
     }
 }
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "edu.highline.swimmyfish.SwimmyFish"
+        )
+    }
+}
