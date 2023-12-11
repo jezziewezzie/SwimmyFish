@@ -11,14 +11,14 @@ import static edu.highline.swimmyfish.SwimmyFish.FISH_ATLAS_FILENAME;
 
 public class PlayerFish extends Actor {
     private static final float GRAVITY = -1050;
-    private final SwimmyFish game;
+    private final GameScreen gameScreen;
     private final TextureAtlas atlas;
     private final TextureRegion region;
     private int movementSpeed;
     private float yVelocity;
 
-    public PlayerFish(SwimmyFish game) {
-        this.game = game;
+    public PlayerFish(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
         atlas = new TextureAtlas(Gdx.files.internal(FISH_ATLAS_FILENAME));
         region = atlas.findRegion("player fish");
         setBounds(region.getRegionX(), region.getRegionY(), region.getRegionWidth(),
@@ -43,7 +43,6 @@ public class PlayerFish extends Actor {
 
     public void update(float deltaTime) {
         move(deltaTime);
-        keepInBounds();
         //rotate(deltaTime);
     }
 
@@ -55,14 +54,11 @@ public class PlayerFish extends Actor {
         if (yVelocity < terminalVelocity) {
             yVelocity = terminalVelocity;
         }
-    }
-
-    private void keepInBounds() {
-        if (getY() < 0) {
-            setY(0);
+        if (getY() > gameScreen.viewport.getWorldHeight() - 75) {
+            yVelocity *= 0.25f * deltaTime;
         }
-        if (getY() > game.viewport.getWorldHeight() - getHeight()) {
-            setY(game.viewport.getWorldHeight() - getHeight());
+        if (getY() < 0 - getHeight()) {
+            gameScreen.game.setScreen(new GameScreen(gameScreen.game));
         }
     }
 

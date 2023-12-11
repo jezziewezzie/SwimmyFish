@@ -2,7 +2,7 @@ scenery.png
 size:2048,128
 repeat:none
 ocean
-bounds:206,2,100,100
+bounds:308,2,100,100
 sand
 index:5
 bounds:2,2,100,100
@@ -10,8 +10,8 @@ sand
 index:2
 bounds:104,2,100,100
 sand
-index:4
-bounds:308,2,100,100
+index:7
+bounds:206,2,100,100
 sand
 index:9
 bounds:410,2,100,100
@@ -31,7 +31,7 @@ sand
 index:8
 bounds:1022,2,100,100
 sand
-index:7
+index:4
 bounds:1124,8,100,94
 star
 bounds:1226,37,75,65

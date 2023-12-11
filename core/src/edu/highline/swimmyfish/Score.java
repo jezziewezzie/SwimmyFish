@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import static edu.highline.swimmyfish.SwimmyFish.NUMBERS_ATLAS_FILENAME;
 
 public class Score extends Actor {
-    private final SwimmyFish game;
+    private final GameScreen gameScreen;
     private final TextureAtlas atlas;
     private final ArrayList<Sprite> digits;
     private final ArrayList<TextureRegion> numbers;
     private int score;
 
-    public Score(SwimmyFish game) {
-        this.game = game;
+    public Score(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
         atlas = new TextureAtlas(Gdx.files.internal(NUMBERS_ATLAS_FILENAME));
         numbers = new ArrayList<>();
         numbers.add(atlas.findRegion("zero"));
@@ -68,8 +68,9 @@ public class Score extends Actor {
 
     @Override
     public void draw(Batch batch, float ignoredParentAlpha) {
-        float y = game.camera.position.y + (game.camera.viewportHeight / 2) - numbers.get(0).getRegionHeight() * 1.5f;
-        float x = game.camera.position.x - getWidth() / 2;
+        float y = gameScreen.camera.position.y + (gameScreen.camera.viewportHeight / 2) -
+                  numbers.get(0).getRegionHeight() * 1.25f;
+        float x = gameScreen.camera.position.x - getWidth() / 2;
 
         for (int i = 0; i < digits.size(); i++) {
             digits.get(i).setPosition(x + i * digits.get(i).getWidth(), y);

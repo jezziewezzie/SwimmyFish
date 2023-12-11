@@ -7,12 +7,10 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayDeque;
-
 public class GameWorld {
     public static final int OBSTACLE_SPACING = 300;
     public static final int NUMBER_OF_OBSTACLES = 6;
-    private final SwimmyFish game;
+    private final GameScreen gameScreen;
     private final Background background;
     private final PlayerFish player;
     private final Score score;
@@ -20,41 +18,41 @@ public class GameWorld {
     private ObstacleFishPair closestObstacle;
 
     public GameWorld(GameScreen gameScreen) {
-        game = gameScreen.game;
+        this.gameScreen = gameScreen;
 
-        background = new Background(game);
-        game.stage.addActor(background);
+        background = new Background(this.gameScreen);
+        this.gameScreen.stage.addActor(background);
 
-        player = new PlayerFish(game);
+        player = new PlayerFish(this.gameScreen);
         player.setX(OBSTACLE_SPACING / -2f);
-        player.setY(game.camera.viewportHeight / 2, Align.center);
+        player.setY(gameScreen.camera.viewportHeight / 2, Align.center);
 
-        score = new Score(game);
+        score = new Score(this.gameScreen);
 
         obstacles = new Array<>();
-        float obstacleWidth = new ObstacleFish(game, false, 0, 0, 0).getWidth();
+        float obstacleWidth = new ObstacleFish(this.gameScreen, false, 0, 0, 0).getWidth();
         for (int i = 1; i <= NUMBER_OF_OBSTACLES; i++) {
             ObstacleFishPair obstacle =
-                    new ObstacleFishPair(game, (OBSTACLE_SPACING + obstacleWidth) * i);
-            game.stage.addActor(obstacle.getBottomFish());
-            game.stage.addActor(obstacle.getTopFish());
+                    new ObstacleFishPair(this.gameScreen, (OBSTACLE_SPACING + obstacleWidth) * i);
+            this.gameScreen.stage.addActor(obstacle.getBottomFish());
+            this.gameScreen.stage.addActor(obstacle.getTopFish());
             obstacles.add(obstacle);
         }
         closestObstacle = obstacles.first();
 
-        game.stage.addActor(player);
-        game.stage.setKeyboardFocus(player);
-        game.stage.addActor(score);
+        this.gameScreen.stage.addActor(player);
+        this.gameScreen.stage.setKeyboardFocus(player);
+        this.gameScreen.stage.addActor(score);
     }
 
     public void update(float deltaTime) {
         handleInput();
         player.update(deltaTime);
-        game.camera.position.x = player.getX() + OBSTACLE_SPACING;
-        game.camera.update();
+        gameScreen.camera.position.x = player.getX() + OBSTACLE_SPACING;
+        gameScreen.camera.update();
 
         for (ObstacleFishPair obstacle : new Array.ArrayIterator<>(obstacles)) {
-            if (game.camera.position.x - game.camera.viewportWidth / 2 >
+            if (gameScreen.camera.position.x - gameScreen.camera.viewportWidth / 2 >
                 obstacle.getX() + obstacle.getWidth())
             {
                 obstacle.update(obstacle.getX() +
@@ -63,7 +61,7 @@ public class GameWorld {
             if (Intersector.overlaps(player.getBounds(), obstacle.getBottomFish().getBounds()) ||
                 Intersector.overlaps(player.getBounds(), obstacle.getTopFish().getBounds()))
             {
-                game.setScreen(new GameScreen(game));
+                gameScreen.game.setScreen(new GameScreen(gameScreen.game));
             }
         }
 

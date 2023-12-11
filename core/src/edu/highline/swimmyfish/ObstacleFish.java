@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import static edu.highline.swimmyfish.SwimmyFish.FISH_ATLAS_FILENAME;
 
 public class ObstacleFish extends Actor {
-    private final SwimmyFish game;
+    private final GameScreen gameScreen;
     private final boolean isTop;
     private final TextureAtlas atlas;
     private final Sprite headSprite;
     private final ArrayList<Sprite> bodySprites;
     private int bodySegments;
 
-    public ObstacleFish(SwimmyFish game, boolean isTop, int totalPossibleBodySegments,
+    public ObstacleFish(GameScreen gameScreen, boolean isTop, int totalPossibleBodySegments,
                         int bodySegments, float x)
     {
-        this.game = game;
+        this.gameScreen = gameScreen;
         this.isTop = isTop;
         this.bodySegments = bodySegments;
 
@@ -54,7 +54,7 @@ public class ObstacleFish extends Actor {
     private void constructTopFish(int bodySegments, float x) {
         this.bodySegments = bodySegments;
 
-        float height = game.stage.getHeight();
+        float height = gameScreen.stage.getHeight();
         for (int i = 0; i < bodySegments; i++) {
             Sprite sprite = bodySprites.get(i);
             sprite.setX(x);
@@ -67,7 +67,7 @@ public class ObstacleFish extends Actor {
 
         setHeight(height);
         setX(x);
-        setY(game.stage.getHeight() - height);
+        setY(gameScreen.stage.getHeight() - height);
     }
 
     private void constructBottomFish(int bodySegments, float x) {
