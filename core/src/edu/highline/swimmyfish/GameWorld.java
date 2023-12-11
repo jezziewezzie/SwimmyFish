@@ -3,50 +3,82 @@ package edu.highline.swimmyfish;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 
 public class GameWorld {
     public static final int OBSTACLE_SPACING = 300;
     public static final int NUMBER_OF_OBSTACLES = 6;
     private final SwimmyFish game;
+    private final Background background;
     private final PlayerFish player;
-    private final ArrayList<ObstacleFishPair> obstacles;
+    private final Score score;
+    private final Array<ObstacleFishPair> obstacles;
+    private ObstacleFishPair closestObstacle;
 
     public GameWorld(GameScreen gameScreen) {
         game = gameScreen.game;
-        player = new PlayerFish(game);
-        player.setY(game.camera.viewportHeight / 2, Align.center);
-        game.stage.addActor(player);
-        game.stage.setKeyboardFocus(player);
 
-        obstacles = new ArrayList<>();
+        background = new Background(game);
+        game.stage.addActor(background);
+
+        player = new PlayerFish(game);
+        player.setX(OBSTACLE_SPACING / -2f);
+        player.setY(game.camera.viewportHeight / 2, Align.center);
+
+        score = new Score(game);
+
+        obstacles = new Array<>();
+        float obstacleWidth = new ObstacleFish(game, false, 0, 0, 0).getWidth();
         for (int i = 1; i <= NUMBER_OF_OBSTACLES; i++) {
-            float obstacleWidth = new ObstacleFish(game, false, 0, 0, 0).getWidth();
             ObstacleFishPair obstacle =
                     new ObstacleFishPair(game, (OBSTACLE_SPACING + obstacleWidth) * i);
             game.stage.addActor(obstacle.getBottomFish());
             game.stage.addActor(obstacle.getTopFish());
             obstacles.add(obstacle);
         }
+        closestObstacle = obstacles.first();
+
+        game.stage.addActor(player);
+        game.stage.setKeyboardFocus(player);
+        game.stage.addActor(score);
     }
 
     public void update(float deltaTime) {
         handleInput();
         player.update(deltaTime);
-
         game.camera.position.x = player.getX() + OBSTACLE_SPACING;
-        for (ObstacleFishPair obstacle : obstacles) {
+        game.camera.update();
+
+        for (ObstacleFishPair obstacle : new Array.ArrayIterator<>(obstacles)) {
             if (game.camera.position.x - game.camera.viewportWidth / 2 >
                 obstacle.getX() + obstacle.getWidth())
             {
                 obstacle.update(obstacle.getX() +
                                 (obstacle.getWidth() + OBSTACLE_SPACING) * NUMBER_OF_OBSTACLES);
             }
-            checkObstacleCollision(obstacle);
+            if (Intersector.overlaps(player.getBounds(), obstacle.getBottomFish().getBounds()) ||
+                Intersector.overlaps(player.getBounds(), obstacle.getTopFish().getBounds()))
+            {
+                game.setScreen(new GameScreen(game));
+            }
         }
-        game.camera.update();
+
+        if (player.getX(Align.center) > closestObstacle.getX() + closestObstacle.getWidth()) {
+            if (!closestObstacle.isPassed()) {
+                score.update();
+                player.increaseSpeed();
+
+                closestObstacle.setPassed(true);
+                obstacles.removeValue(closestObstacle, true);
+                obstacles.add(closestObstacle);
+                closestObstacle = obstacles.first();
+                closestObstacle.setPassed(false);
+            }
+        }
     }
 
     private void handleInput() {
@@ -62,24 +94,12 @@ public class GameWorld {
         });
     }
 
-    private void checkObstacleCollision(ObstacleFishPair obstacle) {
-        if (player.getBounds().overlaps(obstacle.getBottomFish().getBounds()))
-        {
-            System.out.println("player bounds: " + player.getBounds());
-            System.out.println("obstacle bounds: " + obstacle.getBottomFish().getBounds());
-            game.setScreen(new GameScreen(game));
-        }
-        if (player.getBounds().overlaps(obstacle.getTopFish().getBounds())) {
-            System.out.println("player bounds: " + player.getBounds());
-            System.out.println("obstacle bounds: " + obstacle.getTopFish().getBounds().toString());
-            game.setScreen(new GameScreen(game));
-        }
-    }
-
     public void dispose() {
-        player.dispose();
-        for (ObstacleFishPair obstacle : obstacles) {
+        background.dispose();
+        for (ObstacleFishPair obstacle : new Array.ArrayIterator<>(obstacles)) {
             obstacle.dispose();
         }
+        player.dispose();
+        score.dispose();
     }
 }

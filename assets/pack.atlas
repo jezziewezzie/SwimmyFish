@@ -1,0 +1,10 @@
+pack.png
+size:256,128
+filter:Linear,Linear
+repeat:none
+obstacle fish body
+bounds:147,2,65,77
+obstacle fish head
+bounds:80,2,65,77
+player fish
+bounds:2,3,76,76

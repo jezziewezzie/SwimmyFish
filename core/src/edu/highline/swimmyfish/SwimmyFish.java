@@ -8,11 +8,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class SwimmyFish extends Game {
-    protected final static int WORLD_WIDTH = 1000;
-    protected final static int WORLD_HEIGHT = 800;
-    protected Camera camera;
-    protected Viewport viewport;
-    protected Stage stage;
+    public final static int WORLD_WIDTH = 1000;
+    public final static int WORLD_HEIGHT = 800;
+    public final static String SCENERY_ATLAS_FILENAME = "scenery.atlas";
+    public final static String FISH_ATLAS_FILENAME = "fish.atlas";
+    public final static String NUMBERS_ATLAS_FILENAME = "numbers.atlas";
+    public Camera camera;
+    public Viewport viewport;
+    public Stage stage;
     private GameScreen gameScreen;
 
     @Override

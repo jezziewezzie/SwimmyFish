@@ -18,7 +18,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float deltaTime) {
-        ScreenUtils.clear(Color.BLACK);
+        //ScreenUtils.clear(220, 239, 244, 1, false);
 
         world.update(deltaTime);
         game.stage.draw();

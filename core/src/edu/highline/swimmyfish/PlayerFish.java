@@ -1,35 +1,44 @@
 package edu.highline.swimmyfish;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import static edu.highline.swimmyfish.SwimmyFish.FISH_ATLAS_FILENAME;
+
 public class PlayerFish extends Actor {
-    private static final float GRAVITY = -1000;
-    private static final float MOVEMENT_SPEED = 200;
+    private static final float GRAVITY = -1050;
     private final SwimmyFish game;
-    private final Texture texture;
+    private final TextureAtlas atlas;
     private final TextureRegion region;
+    private int movementSpeed;
     private float yVelocity;
 
     public PlayerFish(SwimmyFish game) {
         this.game = game;
-        texture = new Texture(Gdx.files.internal("red fish alt.png"));
-        texture.setFilter(Texture.TextureFilter.Linear,
-                Texture.TextureFilter.Linear);
-        region = new TextureRegion(texture);
-        setBounds(region.getRegionX(), region.getRegionY(),
-                region.getRegionWidth(), region.getRegionHeight());
+        atlas = new TextureAtlas(Gdx.files.internal(FISH_ATLAS_FILENAME));
+        region = atlas.findRegion("player fish");
+        setBounds(region.getRegionX(), region.getRegionY(), region.getRegionWidth(),
+                  region.getRegionHeight());
         setOrigin(getWidth() / 2, getHeight() / 2);
 
+        movementSpeed = 200;
         yVelocity = 0;
     }
 
-    public Rectangle getBounds() {
-        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    public Circle getBounds() {
+        float radius = Math.min(getWidth(), getHeight()) / 2;
+        radius -= 8; // make collision a bit more forgiving
+        float centerX = getX() + getWidth() / 2;
+        float centerY = getY() + getHeight() / 2;
+        return new Circle(centerX, centerY, radius);
+    }
+
+    public void increaseSpeed() {
+        movementSpeed += 5;
     }
 
     public void update(float deltaTime) {
@@ -39,10 +48,10 @@ public class PlayerFish extends Actor {
     }
 
     private void move(float deltaTime) {
-        setX(getX() + MOVEMENT_SPEED * deltaTime);
+        setX(getX() + movementSpeed * deltaTime);
         setY(getY() + (yVelocity + deltaTime * GRAVITY / 2) * deltaTime);
         yVelocity += GRAVITY * deltaTime;
-        int terminalVelocity = -800;
+        int terminalVelocity = -850;
         if (yVelocity < terminalVelocity) {
             yVelocity = terminalVelocity;
         }
@@ -72,17 +81,16 @@ public class PlayerFish extends Actor {
     }
 
     public void jump() {
-        yVelocity = 450;
+        yVelocity = 460;
     }
 
     public void dispose() {
-        texture.dispose();
+        atlas.dispose();
     }
 
     @Override
     public void draw(Batch batch, float ignoredParentAlpha) {
-        batch.draw(region, getX(), getY(), getOriginX(), getOriginY(),
-                getWidth(), getHeight(), getScaleX(), getScaleY(),
-                getRotation());
+        batch.draw(region, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
+                   getScaleX(), getScaleY(), getRotation());
     }
 }

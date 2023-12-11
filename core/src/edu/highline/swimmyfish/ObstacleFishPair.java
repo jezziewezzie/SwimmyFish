@@ -6,32 +6,15 @@ public class ObstacleFishPair {
     private static final int TOTAL_BODY_SEGMENTS = 7;
     private final ObstacleFish bottomFish;
     private final ObstacleFish topFish;
-
-    public ObstacleFishPair(SwimmyFish game, int bottomBodySegments,
-                            int topBodySegments, float x)
-    {
-        bottomFish = new ObstacleFish(game, false, TOTAL_BODY_SEGMENTS,
-                bottomBodySegments, x);
-        topFish = new ObstacleFish(game, true, TOTAL_BODY_SEGMENTS,
-                topBodySegments, x);
-        generateObstacleAtPosition(bottomBodySegments, topBodySegments, x);
-    }
-
-    public void generateObstacleAtPosition(int bottomBodySegments,
-                                           int topBodySegments, float x)
-    {
-        bottomFish.constructFish(bottomBodySegments, x);
-        topFish.constructFish(topBodySegments, x);
-    }
+    private boolean passed;
 
     public ObstacleFishPair(SwimmyFish game, float x) {
         int[] segments = generateRandomNumBodySegments();
         int bottomBodySegments = segments[0];
         int topBodySegments = segments[1];
-        bottomFish = new ObstacleFish(game, false, TOTAL_BODY_SEGMENTS,
-                bottomBodySegments, x);
-        topFish = new ObstacleFish(game, true, TOTAL_BODY_SEGMENTS,
-                topBodySegments, x);
+        bottomFish = new ObstacleFish(game, false, TOTAL_BODY_SEGMENTS, bottomBodySegments, x);
+        topFish = new ObstacleFish(game, true, TOTAL_BODY_SEGMENTS, topBodySegments, x);
+        passed = false;
     }
 
     private int[] generateRandomNumBodySegments() {
@@ -63,6 +46,14 @@ public class ObstacleFishPair {
         return bottomFish.getWidth();
     }
 
+    public boolean isPassed() {
+        return passed;
+    }
+
+    public void setPassed(boolean passed) {
+        this.passed = passed;
+    }
+
     public void update(float x) {
         int[] segments = generateRandomNumBodySegments();
         int bottomBodySegments = segments[0];
@@ -70,9 +61,14 @@ public class ObstacleFishPair {
         generateObstacleAtPosition(bottomBodySegments, topBodySegments, x);
     }
 
+    public void generateObstacleAtPosition(int bottomBodySegments, int topBodySegments, float x)
+    {
+        bottomFish.constructFish(bottomBodySegments, x);
+        topFish.constructFish(topBodySegments, x);
+    }
+
     public void dispose() {
         bottomFish.dispose();
         topFish.dispose();
     }
-
 }
