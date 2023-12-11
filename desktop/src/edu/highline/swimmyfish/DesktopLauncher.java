@@ -3,8 +3,8 @@ package edu.highline.swimmyfish;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-import static edu.highline.swimmyfish.SwimmyFish.WORLD_WIDTH;
 import static edu.highline.swimmyfish.SwimmyFish.WORLD_HEIGHT;
+import static edu.highline.swimmyfish.SwimmyFish.WORLD_WIDTH;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {

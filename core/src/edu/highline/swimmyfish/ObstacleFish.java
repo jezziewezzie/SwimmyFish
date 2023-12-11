@@ -3,7 +3,10 @@ package edu.highline.swimmyfish;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Ellipse;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -27,11 +30,11 @@ public class ObstacleFish extends Actor {
         this.bodySegments = bodySegments;
 
         headTexture =
-                new Texture(Gdx.files.internal("long tang fish head alt.png"));
+                new Texture(Gdx.files.internal("obstacle fish head.png"));
         headTexture.setFilter(Texture.TextureFilter.Linear,
                               Texture.TextureFilter.Linear);
         bodyTexture = new Texture(Gdx.files.internal(
-                "long tang fish middle alt" + ".png"));
+                "obstacle fish body.png"));
         bodyTexture.setFilter(Texture.TextureFilter.Linear,
                               Texture.TextureFilter.Linear);
 
@@ -97,7 +100,12 @@ public class ObstacleFish extends Actor {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+        Rectangle bounds = headSprite.getBoundingRectangle();
+        for (int i = 0; i < bodySegments; i++) {
+            bounds = bounds.merge(bodySprites.get(i).getBoundingRectangle());
+            bounds.setWidth(bodySprites.get(i).getWidth());
+        }
+        return bounds;
     }
 
     public void dispose() {

@@ -10,16 +10,10 @@ public class ObstacleFishPair {
     public ObstacleFishPair(SwimmyFish game, int bottomBodySegments,
                             int topBodySegments, float x)
     {
-        bottomFish = new ObstacleFish(game,
-                                      false,
-                                      TOTAL_BODY_SEGMENTS,
-                                      bottomBodySegments,
-                                      x);
-        topFish = new ObstacleFish(game,
-                                   true,
-                                   TOTAL_BODY_SEGMENTS,
-                                   topBodySegments,
-                                   x);
+        bottomFish = new ObstacleFish(game, false, TOTAL_BODY_SEGMENTS,
+                bottomBodySegments, x);
+        topFish = new ObstacleFish(game, true, TOTAL_BODY_SEGMENTS,
+                topBodySegments, x);
         generateObstacleAtPosition(bottomBodySegments, topBodySegments, x);
     }
 
@@ -34,16 +28,10 @@ public class ObstacleFishPair {
         int[] segments = generateRandomNumBodySegments();
         int bottomBodySegments = segments[0];
         int topBodySegments = segments[1];
-        bottomFish = new ObstacleFish(game,
-                                      false,
-                                      TOTAL_BODY_SEGMENTS,
-                                      bottomBodySegments,
-                                      x);
-        topFish = new ObstacleFish(game,
-                                   true,
-                                   TOTAL_BODY_SEGMENTS,
-                                   topBodySegments,
-                                   x);
+        bottomFish = new ObstacleFish(game, false, TOTAL_BODY_SEGMENTS,
+                bottomBodySegments, x);
+        topFish = new ObstacleFish(game, true, TOTAL_BODY_SEGMENTS,
+                topBodySegments, x);
     }
 
     private int[] generateRandomNumBodySegments() {

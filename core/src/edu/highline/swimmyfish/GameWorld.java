@@ -23,12 +23,9 @@ public class GameWorld {
 
         obstacles = new ArrayList<>();
         for (int i = 1; i <= NUMBER_OF_OBSTACLES; i++) {
-            float obstacleWidth =
-                    new ObstacleFish(game, false, 0, 0, 0).getWidth();
-            ObstacleFishPair obstacle = new ObstacleFishPair(game,
-                                                             (OBSTACLE_SPACING
-                                                                     + obstacleWidth)
-                                                                     * i);
+            float obstacleWidth = new ObstacleFish(game, false, 0, 0, 0).getWidth();
+            ObstacleFishPair obstacle =
+                    new ObstacleFishPair(game, (OBSTACLE_SPACING + obstacleWidth) * i);
             game.stage.addActor(obstacle.getBottomFish());
             game.stage.addActor(obstacle.getTopFish());
             obstacles.add(obstacle);
@@ -41,29 +38,13 @@ public class GameWorld {
 
         game.camera.position.x = player.getX() + OBSTACLE_SPACING;
         for (ObstacleFishPair obstacle : obstacles) {
-            if (game.camera.position.x - game.camera.viewportWidth / 2
-                    > obstacle.getX() + obstacle.getWidth())
+            if (game.camera.position.x - game.camera.viewportWidth / 2 >
+                obstacle.getX() + obstacle.getWidth())
             {
-                obstacle.update(obstacle.getX() + (obstacle.getWidth()
-                        + OBSTACLE_SPACING) * NUMBER_OF_OBSTACLES);
+                obstacle.update(obstacle.getX() +
+                                (obstacle.getWidth() + OBSTACLE_SPACING) * NUMBER_OF_OBSTACLES);
             }
-//            if (player.getBounds()
-//                      .overlaps(obstacle.getBottomFish().getBounds()))
-//            {
-//                System.out.println("player " + player.getBounds());
-//                System.out.println(
-//                        "bottom " + obstacle.getBottomFish().getBounds());
-//                System.out.println();
-//                game.setScreen(new GameScreen(game));
-//            }
-//            if (player.getBounds()
-//                      .overlaps(obstacle.getTopFish().getBounds()))
-//            {
-//                System.out.println("player " + player.getBounds());
-//                System.out.println("top " + obstacle.getTopFish().getBounds());
-//                System.out.println();
-//                game.setScreen(new GameScreen(game));
-//            }
+            checkObstacleCollision(obstacle);
         }
         game.camera.update();
     }
@@ -79,6 +60,20 @@ public class GameWorld {
                 return false;
             }
         });
+    }
+
+    private void checkObstacleCollision(ObstacleFishPair obstacle) {
+        if (player.getBounds().overlaps(obstacle.getBottomFish().getBounds()))
+        {
+            System.out.println("player bounds: " + player.getBounds());
+            System.out.println("obstacle bounds: " + obstacle.getBottomFish().getBounds());
+            game.setScreen(new GameScreen(game));
+        }
+        if (player.getBounds().overlaps(obstacle.getTopFish().getBounds())) {
+            System.out.println("player bounds: " + player.getBounds());
+            System.out.println("obstacle bounds: " + obstacle.getTopFish().getBounds().toString());
+            game.setScreen(new GameScreen(game));
+        }
     }
 
     public void dispose() {

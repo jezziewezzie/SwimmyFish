@@ -19,12 +19,10 @@ public class PlayerFish extends Actor {
         this.game = game;
         texture = new Texture(Gdx.files.internal("red fish alt.png"));
         texture.setFilter(Texture.TextureFilter.Linear,
-                          Texture.TextureFilter.Linear);
+                Texture.TextureFilter.Linear);
         region = new TextureRegion(texture);
-        setBounds(region.getRegionX(),
-                  region.getRegionY(),
-                  region.getRegionWidth(),
-                  region.getRegionHeight());
+        setBounds(region.getRegionX(), region.getRegionY(),
+                region.getRegionWidth(), region.getRegionHeight());
         setOrigin(getWidth() / 2, getHeight() / 2);
 
         yVelocity = 0;
@@ -40,15 +38,6 @@ public class PlayerFish extends Actor {
         //rotate(deltaTime);
     }
 
-    private void keepInBounds() {
-        if (getY() < 0) {
-            setY(0);
-        }
-        if (getY() > game.viewport.getWorldHeight() - getHeight()) {
-            setY(game.viewport.getWorldHeight() - getHeight());
-        }
-    }
-
     private void move(float deltaTime) {
         setX(getX() + MOVEMENT_SPEED * deltaTime);
         setY(getY() + (yVelocity + deltaTime * GRAVITY / 2) * deltaTime);
@@ -56,6 +45,15 @@ public class PlayerFish extends Actor {
         int terminalVelocity = -800;
         if (yVelocity < terminalVelocity) {
             yVelocity = terminalVelocity;
+        }
+    }
+
+    private void keepInBounds() {
+        if (getY() < 0) {
+            setY(0);
+        }
+        if (getY() > game.viewport.getWorldHeight() - getHeight()) {
+            setY(game.viewport.getWorldHeight() - getHeight());
         }
     }
 
@@ -74,7 +72,7 @@ public class PlayerFish extends Actor {
     }
 
     public void jump() {
-        yVelocity = 475;
+        yVelocity = 450;
     }
 
     public void dispose() {
@@ -83,15 +81,8 @@ public class PlayerFish extends Actor {
 
     @Override
     public void draw(Batch batch, float ignoredParentAlpha) {
-        batch.draw(region,
-                   getX(),
-                   getY(),
-                   getOriginX(),
-                   getOriginY(),
-                   getWidth(),
-                   getHeight(),
-                   getScaleX(),
-                   getScaleY(),
-                   getRotation());
+        batch.draw(region, getX(), getY(), getOriginX(), getOriginY(),
+                getWidth(), getHeight(), getScaleX(), getScaleY(),
+                getRotation());
     }
 }
