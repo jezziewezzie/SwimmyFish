@@ -1,10 +1,12 @@
 fish.png
-size:256,128
+size:1024,256
 filter:Linear,Linear
 repeat:none
+dead fish
+bounds:2,2,500,250
 obstacle fish body
-bounds:147,2,65,77
+bounds:504,18,65,77
 obstacle fish head
-bounds:80,2,65,77
+bounds:504,97,65,77
 player fish
-bounds:2,3,76,76
+bounds:504,176,76,76

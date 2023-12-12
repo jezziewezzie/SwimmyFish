@@ -1,6 +1,7 @@
 package edu.highline.swimmyfish;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,19 +12,21 @@ import static edu.highline.swimmyfish.SwimmyFish.FISH_ATLAS_FILENAME;
 
 public class PlayerFish extends Actor {
     private static final float GRAVITY = -1050;
-    private final GameScreen gameScreen;
+    private final SwimmyFish game;
     private final TextureAtlas atlas;
     private final TextureRegion region;
+    private final Sound swimSound;
     private int movementSpeed;
     private float yVelocity;
 
-    public PlayerFish(GameScreen gameScreen) {
-        this.gameScreen = gameScreen;
+    public PlayerFish(SwimmyFish game) {
+        this.game = game;
         atlas = new TextureAtlas(Gdx.files.internal(FISH_ATLAS_FILENAME));
         region = atlas.findRegion("player fish");
         setBounds(region.getRegionX(), region.getRegionY(), region.getRegionWidth(),
                   region.getRegionHeight());
         setOrigin(getWidth() / 2, getHeight() / 2);
+        swimSound = Gdx.audio.newSound(Gdx.files.internal("swim.wav"));
 
         movementSpeed = 200;
         yVelocity = 0;
@@ -38,7 +41,7 @@ public class PlayerFish extends Actor {
     }
 
     public void increaseSpeed() {
-        movementSpeed += 5;
+        movementSpeed += 4;
     }
 
     public void update(float deltaTime) {
@@ -50,15 +53,13 @@ public class PlayerFish extends Actor {
         setX(getX() + movementSpeed * deltaTime);
         setY(getY() + (yVelocity + deltaTime * GRAVITY / 2) * deltaTime);
         yVelocity += GRAVITY * deltaTime;
+
         int terminalVelocity = -850;
         if (yVelocity < terminalVelocity) {
             yVelocity = terminalVelocity;
         }
-        if (getY() > gameScreen.viewport.getWorldHeight() - 75) {
+        if (getY() > game.viewport.getWorldHeight() - 75) {
             yVelocity *= 0.25f * deltaTime;
-        }
-        if (getY() < 0 - getHeight()) {
-            gameScreen.game.setScreen(new GameScreen(gameScreen.game));
         }
     }
 
@@ -78,10 +79,12 @@ public class PlayerFish extends Actor {
 
     public void jump() {
         yVelocity = 460;
+        swimSound.play();
     }
 
     public void dispose() {
         atlas.dispose();
+        swimSound.dispose();
     }
 
     @Override

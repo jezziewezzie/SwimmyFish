@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -12,16 +14,18 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import static edu.highline.swimmyfish.SwimmyFish.SCENERY_ATLAS_FILENAME;
 
 public class Background extends Actor {
-    private final GameScreen gameScreen;
+    private final SwimmyFish game;
+    private final ShapeRenderer renderer;
     private final TextureAtlas atlas;
+    private final int tileSize;
     private final Array<Sprite> sandTiles;
     private final Sprite oceanTile;
     private final Sprite waveTile;
-    private final int tileSize;
     private final Sprite star;
 
-    public Background(GameScreen gameScreen) {
-        this.gameScreen = gameScreen;
+    public Background(SwimmyFish game) {
+        this.game = game;
+        renderer = new ShapeRenderer();
         atlas = new TextureAtlas(Gdx.files.internal(SCENERY_ATLAS_FILENAME));
         tileSize = 100;
         sandTiles = atlas.createSprites("sand");
@@ -38,9 +42,15 @@ public class Background extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        ScreenUtils.clear(new Color(0xEBF9FCff), false);
+        float x = game.camera.position.x - game.camera.viewportWidth / 2;
 
-        float x = gameScreen.camera.position.x - gameScreen.camera.viewportWidth / 2;
+        ScreenUtils.clear(new Color(0xEBF9FCff));
+//        batch.end();
+//        renderer.begin(ShapeRenderer.ShapeType.Filled);
+//        renderer.setColor(new Color(0xEBF9FCff));
+//        renderer.rect(x, 0, game.camera.viewportWidth, game.camera.viewportHeight);
+//        renderer.end();
+//        batch.begin();
 
         for (int j = 0; j < 6; j++) {
             for (int i = 0; i < 10; i++) {
@@ -72,7 +82,7 @@ public class Background extends Actor {
 //        star.draw(batch);
 
         for (int i = 0; i < 10; i++) {
-            waveTile.setBounds(x + tileSize * i, gameScreen.camera.viewportHeight - tileSize * 1.5f, tileSize,
+            waveTile.setBounds(x + tileSize * i, game.camera.viewportHeight - tileSize * 1.5f, tileSize,
                                tileSize);
             waveTile.draw(batch);
         }
