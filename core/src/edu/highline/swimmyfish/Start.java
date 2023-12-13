@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
-//public class Start extends Actor {
 public class Start extends Group {
     private final SwimmyFish game;
     private final CountdownCallback callback;
