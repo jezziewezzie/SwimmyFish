@@ -5,69 +5,78 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
     public final SwimmyFish game;
-    public Stage stage;
+    public Stage gameStage;
+    public Stage menuStage;
     public final InputMultiplexer inputMultiplexer;
-    public InputProcessor gameInputProcessor;
-    public InputProcessor deathViewInputProcessor;
     private GameWorld world;
-    public Group gameGroup;
-    public Group deathViewGroup;
-    private boolean paused;
+    public Overlay overlay;
+    public InputProcessor startInputProcessor;
+    public InputProcessor gameInputProcessor;
+    public InputProcessor gameOverInputProcessor;
+    public GameOver gameOver;
+    public Start start;
     private final Sound deathSound;
+    private boolean paused;
 
     public GameScreen(final SwimmyFish game) {
         this.game = game;
-        stage = new Stage(this.game.viewport);
-        gameGroup = new Group();
-        deathViewGroup = new Group();
-        deathViewGroup.setVisible(false);
-        deathSound = Gdx.audio.newSound(Gdx.files.internal("death.wav"));
-
+        gameStage = new Stage(this.game.viewport);
+        menuStage = new Stage(this.game.viewport);
         inputMultiplexer = new InputMultiplexer();
         world = new GameWorld(game, this);
+        inputMultiplexer.addProcessor(startInputProcessor);
         inputMultiplexer.addProcessor(gameInputProcessor);
-        inputMultiplexer.addProcessor(deathViewInputProcessor);
+        inputMultiplexer.addProcessor(gameOverInputProcessor);
         Gdx.input.setInputProcessor(inputMultiplexer);
+
+        gameOver = new GameOver(this.game);
+        gameOver.setVisible(false);
+        menuStage.addActor(gameOver);
+
+        start = new Start(game, new CountdownCallback() {
+            @Override
+            public void onFinish() {
+                setState(State.PLAYING);
+            }
+        });
+        menuStage.addActor(start);
+
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("death.wav"));
 
         paused = true;
 
-        setState(State.GAME);
+        setState(State.START);
     }
 
     public void setState(State state) {
         switch (state) {
             case START:
                 world = new GameWorld(game, this);
-                deathViewGroup.setVisible(false);
-                inputMultiplexer.setProcessors(gameInputProcessor);
+                overlay.setVisible(false);
+                gameOver.setVisible(false);
+                inputMultiplexer.setProcessors(startInputProcessor);
                 paused = false;
                 break;
-            case GAME:
-                deathViewGroup.setVisible(false);
+            case PLAYING:
+                gameOver.setVisible(false);
+                start.setVisible(false);
                 inputMultiplexer.setProcessors(gameInputProcessor);
                 break;
-            case DEAD:
-                playerDied();
+            case GAME_OVER:
+                showGameOverView();
                 break;
         }
     }
 
-    public void playerDied() {
-        pause();
-        inputMultiplexer.setProcessors(deathViewInputProcessor);
+    public void showGameOverView() {
         deathSound.play();
-        ScreenUtils.clear(1, 1, 1, 1);
-        deathViewGroup.setVisible(true);
+        pause();
+        gameOver.setVisible(true);
+        inputMultiplexer.setProcessors(gameOverInputProcessor);
     }
 
     public boolean isPaused() {
@@ -85,16 +94,8 @@ public class GameScreen implements Screen {
             world.update(deltaTime);
         }
 
-        stage.draw();
-
-        if (paused) {
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            ShapeRenderer renderer = new ShapeRenderer();
-            renderer.begin(ShapeRenderer.ShapeType.Filled);
-            renderer.setColor(1, 1, 1, 0.3f);
-            renderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            renderer.end();
-        }
+        gameStage.draw();
+        menuStage.draw();
     }
 
     @Override
@@ -105,11 +106,13 @@ public class GameScreen implements Screen {
     @Override
     public void pause() {
         paused = true;
+        overlay.setVisible(true);
     }
 
     @Override
     public void resume() {
         paused = false;
+        overlay.setVisible(false);
     }
 
     @Override
@@ -119,12 +122,15 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        stage.dispose();
-        world.dispose();
         deathSound.dispose();
+        gameStage.dispose();
+        menuStage.dispose();
+        world.dispose();
+        overlay.dispose();
+        gameOver.dispose();
     }
 
     public enum State {
-        START, GAME, DEAD
+        START, PLAYING, GAME_OVER
     }
 }

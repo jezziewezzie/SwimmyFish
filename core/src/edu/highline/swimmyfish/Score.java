@@ -1,37 +1,31 @@
 package edu.highline.swimmyfish;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.util.ArrayList;
 
-import static edu.highline.swimmyfish.SwimmyFish.NUMBERS_ATLAS_FILENAME;
-
 public class Score extends Actor {
     private final SwimmyFish game;
-    private final TextureAtlas atlas;
     private final ArrayList<Sprite> digits;
     private final ArrayList<TextureRegion> numbers;
     private int score;
 
     public Score(SwimmyFish game) {
         this.game = game;
-        atlas = new TextureAtlas(Gdx.files.internal(NUMBERS_ATLAS_FILENAME));
         numbers = new ArrayList<>();
-        numbers.add(atlas.findRegion("zero"));
-        numbers.add(atlas.findRegion("one"));
-        numbers.add(atlas.findRegion("two"));
-        numbers.add(atlas.findRegion("three"));
-        numbers.add(atlas.findRegion("four"));
-        numbers.add(atlas.findRegion("five"));
-        numbers.add(atlas.findRegion("six"));
-        numbers.add(atlas.findRegion("seven"));
-        numbers.add(atlas.findRegion("eight"));
-        numbers.add(atlas.findRegion("nine"));
+        numbers.add(game.atlas.findRegion("zero"));
+        numbers.add(game.atlas.findRegion("one"));
+        numbers.add(game.atlas.findRegion("two"));
+        numbers.add(game.atlas.findRegion("three"));
+        numbers.add(game.atlas.findRegion("four"));
+        numbers.add(game.atlas.findRegion("five"));
+        numbers.add(game.atlas.findRegion("six"));
+        numbers.add(game.atlas.findRegion("seven"));
+        numbers.add(game.atlas.findRegion("eight"));
+        numbers.add(game.atlas.findRegion("nine"));
 
         score = 0;
         digits = new ArrayList<>();
@@ -62,9 +56,7 @@ public class Score extends Actor {
         }
     }
 
-    public void dispose() {
-        atlas.dispose();
-    }
+    public void dispose() {}
 
     @Override
     public void draw(Batch batch, float ignoredParentAlpha) {

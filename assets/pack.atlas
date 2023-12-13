@@ -1,10 +1,76 @@
 pack.png
-size:256,128
+size:2048,1024
 filter:Linear,Linear
 repeat:none
+big one
+bounds:1512,811,106,142
+big three
+bounds:4,4,126,145
+big two
+bounds:1008,557,128,142
+dead fish
+bounds:1008,703,500,250
+eight
+bounds:1239,590,95,109
+five
+bounds:332,43,95,106
+four
+bounds:1008,325,95,109
+nine
+bounds:1008,438,95,115
 obstacle fish body
-bounds:147,2,65,77
+bounds:1107,395,65,77
 obstacle fish head
-bounds:80,2,65,77
+bounds:1107,476,65,77
+ocean
+bounds:431,49,100,100
+one
+bounds:134,20,95,129
 player fish
-bounds:2,3,76,76
+bounds:1107,315,76,76
+sand
+index:5
+bounds:1512,707,100,100
+sand
+index:2
+bounds:1338,599,100,100
+sand
+index:7
+bounds:1820,853,100,100
+sand
+index:9
+bounds:1924,853,100,100
+sand
+index:1
+bounds:535,49,100,100
+sand
+index:6
+bounds:743,49,100,100
+sand
+index:10
+bounds:847,49,100,100
+sand
+index:3
+bounds:1442,599,100,100
+sand
+index:8
+bounds:1546,603,100,100
+sand
+index:4
+bounds:1008,118,100,94
+seven
+bounds:1622,840,95,113
+six
+bounds:1140,584,95,115
+star
+bounds:1107,246,75,65
+three
+bounds:233,39,95,110
+two
+bounds:1721,847,95,106
+wave
+bounds:639,49,100,100
+white overlay
+bounds:4,153,1000,800
+zero
+bounds:1008,216,95,105

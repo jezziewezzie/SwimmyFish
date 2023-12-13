@@ -3,17 +3,13 @@ package edu.highline.swimmyfish;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import static edu.highline.swimmyfish.SwimmyFish.FISH_ATLAS_FILENAME;
-
 public class PlayerFish extends Actor {
     private static final float GRAVITY = -1050;
     private final SwimmyFish game;
-    private final TextureAtlas atlas;
     private final TextureRegion region;
     private final Sound swimSound;
     private int movementSpeed;
@@ -21,15 +17,15 @@ public class PlayerFish extends Actor {
 
     public PlayerFish(SwimmyFish game) {
         this.game = game;
-        atlas = new TextureAtlas(Gdx.files.internal(FISH_ATLAS_FILENAME));
-        region = atlas.findRegion("player fish");
-        setBounds(region.getRegionX(), region.getRegionY(), region.getRegionWidth(),
+        region = game.atlas.findRegion("player fish");
+        setBounds(game.camera.viewportWidth + region.getRegionWidth() * 2, game.camera.viewportHeight - region.getRegionY() / 2f, region.getRegionWidth(),
                   region.getRegionHeight());
         setOrigin(getWidth() / 2, getHeight() / 2);
         swimSound = Gdx.audio.newSound(Gdx.files.internal("swim.wav"));
 
         movementSpeed = 200;
         yVelocity = 0;
+        System.out.println(getX());
     }
 
     public Circle getBounds() {
@@ -83,7 +79,6 @@ public class PlayerFish extends Actor {
     }
 
     public void dispose() {
-        atlas.dispose();
         swimSound.dispose();
     }
 

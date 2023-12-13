@@ -13,7 +13,7 @@ public class DesktopLauncher {
         config.setTitle("Swimmy Fish");
         config.setWindowedMode(WORLD_WIDTH, WORLD_HEIGHT);
         config.setResizable(false);
-        config.setForegroundFPS(60);
+        config.setForegroundFPS(144);
         config.useVsync(true);
         new Lwjgl3Application(new SwimmyFish(), config);
     }

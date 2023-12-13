@@ -1,6 +1,5 @@
 package edu.highline.swimmyfish;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Intersector;
@@ -17,23 +16,21 @@ public class GameWorld {
     private final Score score;
     private final Array<ObstacleFishPair> obstacles;
     private ObstacleFishPair closestObstacle;
-    private final DeathView deathView;
 
     public GameWorld(SwimmyFish game, GameScreen gameScreen) {
         this.game = game;
         this.gameScreen = gameScreen;
 
         background = new Background(this.game);
-
-        gameScreen.gameGroup.addActor(background);
+        gameScreen.gameStage.addActor(background);
 
         obstacles = new Array<>();
-        float obstacleWidth = new ObstacleFish(gameScreen, false, 0, 0, 0).getWidth();
+        float obstacleWidth = new ObstacleFish(game, gameScreen, false, 0, 0, 0).getWidth();
         for (int i = 1; i <= NUMBER_OF_OBSTACLES; i++) {
             ObstacleFishPair obstacle =
-                    new ObstacleFishPair(gameScreen, (OBSTACLE_SPACING + obstacleWidth) * i);
-            gameScreen.gameGroup.addActor(obstacle.getBottomFish());
-            gameScreen.gameGroup.addActor(obstacle.getTopFish());
+                    new ObstacleFishPair(game, gameScreen, (OBSTACLE_SPACING + obstacleWidth) * i);
+            gameScreen.gameStage.addActor(obstacle.getBottomFish());
+            gameScreen.gameStage.addActor(obstacle.getTopFish());
             obstacles.add(obstacle);
         }
         closestObstacle = obstacles.first();
@@ -41,21 +38,30 @@ public class GameWorld {
         player = new PlayerFish(this.game);
         player.setX(OBSTACLE_SPACING / -2f);
         player.setY(game.camera.viewportHeight / 2, Align.center);
+        gameScreen.gameStage.addActor(player);
+        gameScreen.gameStage.setKeyboardFocus(player);
 
-        gameScreen.gameGroup.addActor(player);
-        gameScreen.stage.setKeyboardFocus(player);
+        gameScreen.overlay = new Overlay(game, gameScreen);
+        gameScreen.overlay.setVisible(false);
+        gameScreen.gameStage.addActor(gameScreen.overlay);
 
         score = new Score(this.game);
+        gameScreen.gameStage.addActor(score);
 
-        gameScreen.gameGroup.addActor(score);
-
-        deathView = new DeathView(this.game);
-
-        gameScreen.deathViewGroup.addActor(deathView);
-
-        gameScreen.stage.addActor(gameScreen.gameGroup);
-        gameScreen.stage.addActor(gameScreen.deathViewGroup);
-
+        gameScreen.startInputProcessor = new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    if (gameScreen.isPaused()) {
+                        gameScreen.resume();
+                    } else {
+                        gameScreen.pause();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
         gameScreen.gameInputProcessor = new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
@@ -73,11 +79,10 @@ public class GameWorld {
                 return false;
             }
         };
-
-        gameScreen.deathViewInputProcessor = new InputAdapter() {
+        gameScreen.gameOverInputProcessor = new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
-                if (keycode == Input.Keys.SPACE) {
+                if (keycode == Input.Keys.ENTER) {
                     gameScreen.setState(GameScreen.State.START);
                     return true;
                 }
@@ -101,10 +106,10 @@ public class GameWorld {
             if (Intersector.overlaps(player.getBounds(), obstacle.getBottomFish().getBounds()) ||
                 Intersector.overlaps(player.getBounds(), obstacle.getTopFish().getBounds()))
             {
-                gameScreen.playerDied();
+                gameScreen.showGameOverView();
             }
             if (player.getY() < 0 - player.getHeight()) {
-                gameScreen.playerDied();
+                gameScreen.showGameOverView();
             }
         }
 
@@ -129,6 +134,5 @@ public class GameWorld {
         }
         player.dispose();
         score.dispose();
-        deathView.dispose();
     }
 }

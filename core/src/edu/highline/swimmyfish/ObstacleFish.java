@@ -1,34 +1,29 @@
 package edu.highline.swimmyfish;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.util.ArrayList;
 
-import static edu.highline.swimmyfish.SwimmyFish.FISH_ATLAS_FILENAME;
-
 public class ObstacleFish extends Actor {
+    private final SwimmyFish game;
     private final GameScreen gameScreen;
     private final boolean isTop;
-    private final TextureAtlas atlas;
     private final Sprite headSprite;
     private final ArrayList<Sprite> bodySprites;
     private int bodySegments;
 
-    public ObstacleFish(GameScreen gameScreen, boolean isTop, int totalPossibleBodySegments,
-                        int bodySegments, float x)
+    public ObstacleFish(SwimmyFish game, GameScreen gameScreen, boolean isTop,
+                        int totalPossibleBodySegments, int bodySegments, float x)
     {
+        this.game = game;
         this.gameScreen = gameScreen;
         this.isTop = isTop;
         this.bodySegments = bodySegments;
 
-        atlas = new TextureAtlas(Gdx.files.internal(FISH_ATLAS_FILENAME));
-
-        headSprite = atlas.createSprite("obstacle fish head");
+        headSprite = game.atlas.createSprite("obstacle fish head");
         if (isTop) {
             headSprite.setRotation(180);
             headSprite.setFlip(true, false);
@@ -36,10 +31,10 @@ public class ObstacleFish extends Actor {
 
         bodySprites = new ArrayList<>();
         for (int i = 0; i < totalPossibleBodySegments; i++) {
-            bodySprites.add(atlas.createSprite("obstacle fish body"));
+            bodySprites.add(game.atlas.createSprite("obstacle fish body"));
         }
 
-        setWidth(atlas.findRegion("obstacle fish body").getRegionWidth());
+        setWidth(game.atlas.findRegion("obstacle fish body").getRegionWidth());
         constructFish(bodySegments, x);
     }
 
@@ -54,7 +49,7 @@ public class ObstacleFish extends Actor {
     private void constructTopFish(int bodySegments, float x) {
         this.bodySegments = bodySegments;
 
-        float height = gameScreen.stage.getHeight();
+        float height = gameScreen.gameStage.getHeight();
         for (int i = 0; i < bodySegments; i++) {
             Sprite sprite = bodySprites.get(i);
             sprite.setX(x);
@@ -67,7 +62,7 @@ public class ObstacleFish extends Actor {
 
         setHeight(height);
         setX(x);
-        setY(gameScreen.stage.getHeight() - height);
+        setY(gameScreen.gameStage.getHeight() - height);
     }
 
     private void constructBottomFish(int bodySegments, float x) {
@@ -98,9 +93,7 @@ public class ObstacleFish extends Actor {
         return bounds;
     }
 
-    public void dispose() {
-        atlas.dispose();
-    }
+    public void dispose() {}
 
     @Override
     public void draw(Batch batch, float ignoredParentAlpha) {

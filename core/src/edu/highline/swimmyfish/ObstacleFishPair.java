@@ -8,12 +8,12 @@ public class ObstacleFishPair {
     private final ObstacleFish topFish;
     private boolean passed;
 
-    public ObstacleFishPair(GameScreen gameScreen, float x) {
+    public ObstacleFishPair(SwimmyFish game, GameScreen gameScreen, float x) {
         int[] segments = generateRandomNumBodySegments();
         int bottomBodySegments = segments[0];
         int topBodySegments = segments[1];
-        bottomFish = new ObstacleFish(gameScreen, false, TOTAL_BODY_SEGMENTS, bottomBodySegments, x);
-        topFish = new ObstacleFish(gameScreen, true, TOTAL_BODY_SEGMENTS, topBodySegments, x);
+        bottomFish = new ObstacleFish(game, gameScreen, false, TOTAL_BODY_SEGMENTS, bottomBodySegments, x);
+        topFish = new ObstacleFish(game, gameScreen, true, TOTAL_BODY_SEGMENTS, topBodySegments, x);
         passed = false;
     }
 

@@ -1,22 +1,16 @@
 package edu.highline.swimmyfish;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import static edu.highline.swimmyfish.SwimmyFish.SCENERY_ATLAS_FILENAME;
-
 public class Background extends Actor {
     private final SwimmyFish game;
     private final ShapeRenderer renderer;
-    private final TextureAtlas atlas;
     private final int tileSize;
     private final Array<Sprite> sandTiles;
     private final Sprite oceanTile;
@@ -26,19 +20,15 @@ public class Background extends Actor {
     public Background(SwimmyFish game) {
         this.game = game;
         renderer = new ShapeRenderer();
-        atlas = new TextureAtlas(Gdx.files.internal(SCENERY_ATLAS_FILENAME));
         tileSize = 100;
-        sandTiles = atlas.createSprites("sand");
-        oceanTile = atlas.createSprite("ocean");
-        waveTile = atlas.createSprite("wave");
-        waveTile.setRegionHeight(waveTile.getRegionHeight() + tileSize);
+        sandTiles = game.atlas.createSprites("sand");
+        oceanTile = game.atlas.createSprite("ocean");
+        waveTile = game.atlas.createSprite("wave");
 
-        star = atlas.createSprite("star");
+        star = game.atlas.createSprite("star");
     }
 
-    public void dispose() {
-        atlas.dispose();
-    }
+    public void dispose() {}
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -82,8 +72,8 @@ public class Background extends Actor {
 //        star.draw(batch);
 
         for (int i = 0; i < 10; i++) {
-            waveTile.setBounds(x + tileSize * i, game.camera.viewportHeight - tileSize * 1.5f, tileSize,
-                               tileSize);
+            waveTile.setBounds(x + tileSize * i, game.camera.viewportHeight - tileSize * 1.5f,
+                               tileSize, tileSize);
             waveTile.draw(batch);
         }
     }

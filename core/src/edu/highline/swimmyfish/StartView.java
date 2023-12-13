@@ -1,3 +1,3 @@
 package edu.highline.swimmyfish;
 
-public class StartScreen {}
+public class StartView {}
