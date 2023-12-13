@@ -13,8 +13,8 @@ public class GameWorld {
     private final GameScreen gameScreen;
     private final Background background;
     private final PlayerFish player;
-    private final Score score;
-    private final Array<ObstacleFishPair> obstacles;
+    public final Score score;
+    public final Array<ObstacleFishPair> obstacles;
     private ObstacleFishPair closestObstacle;
 
     public GameWorld(SwimmyFish game, GameScreen gameScreen) {
@@ -29,6 +29,8 @@ public class GameWorld {
         for (int i = 1; i <= NUMBER_OF_OBSTACLES; i++) {
             ObstacleFishPair obstacle =
                     new ObstacleFishPair(game, gameScreen, (OBSTACLE_SPACING + obstacleWidth) * i);
+            obstacle.getBottomFish().setVisible(false);
+            obstacle.getTopFish().setVisible(false);
             gameScreen.gameStage.addActor(obstacle.getBottomFish());
             gameScreen.gameStage.addActor(obstacle.getTopFish());
             obstacles.add(obstacle);
@@ -41,7 +43,7 @@ public class GameWorld {
         gameScreen.gameStage.addActor(player);
         gameScreen.gameStage.setKeyboardFocus(player);
 
-        gameScreen.overlay = new Overlay(game, gameScreen);
+        gameScreen.overlay = new Overlay(game);
         gameScreen.overlay.setVisible(false);
         gameScreen.gameStage.addActor(gameScreen.overlay);
 
@@ -62,7 +64,7 @@ public class GameWorld {
                 return false;
             }
         };
-        gameScreen.gameInputProcessor = new InputAdapter() {
+        gameScreen.playingInputProcessor = new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.SPACE) {
@@ -106,10 +108,10 @@ public class GameWorld {
             if (Intersector.overlaps(player.getBounds(), obstacle.getBottomFish().getBounds()) ||
                 Intersector.overlaps(player.getBounds(), obstacle.getTopFish().getBounds()))
             {
-                gameScreen.showGameOverView();
+                gameScreen.setState(GameScreen.State.GAME_OVER);
             }
             if (player.getY() < 0 - player.getHeight()) {
-                gameScreen.showGameOverView();
+                gameScreen.setState(GameScreen.State.GAME_OVER);
             }
         }
 

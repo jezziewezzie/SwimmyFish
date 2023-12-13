@@ -1,7 +1,6 @@
 package edu.highline.swimmyfish;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -31,9 +30,9 @@ public class GameOver extends Group {
     public void draw(Batch batch, float parentAlpha) {
         batch.draw(skeleton, game.camera.position.x - skeleton.getRegionWidth() / 2f,
                    game.viewport.getWorldHeight() - skeleton.getRegionHeight() * 2f);
-        text1.setPosition(game.camera.position.x, game.camera.viewportHeight / 3,
-                         Align.center);
-        text2.setPosition(game.camera.position.x, (game.camera.viewportHeight / 3) - text1.getHeight(), Align.center);
+        text1.setPosition(game.camera.position.x, game.camera.viewportHeight / 3, Align.center);
+        text2.setPosition(game.camera.position.x,
+                          (game.camera.viewportHeight / 3) - text1.getHeight(), Align.center);
         text1.draw(batch, parentAlpha);
         text2.draw(batch, parentAlpha);
     }

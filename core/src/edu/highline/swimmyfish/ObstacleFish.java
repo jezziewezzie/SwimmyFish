@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import java.util.ArrayList;
 
 public class ObstacleFish extends Actor {
-    private final SwimmyFish game;
     private final GameScreen gameScreen;
     private final boolean isTop;
     private final Sprite headSprite;
@@ -18,7 +17,6 @@ public class ObstacleFish extends Actor {
     public ObstacleFish(SwimmyFish game, GameScreen gameScreen, boolean isTop,
                         int totalPossibleBodySegments, int bodySegments, float x)
     {
-        this.game = game;
         this.gameScreen = gameScreen;
         this.isTop = isTop;
         this.bodySegments = bodySegments;

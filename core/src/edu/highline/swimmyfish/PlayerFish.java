@@ -18,14 +18,14 @@ public class PlayerFish extends Actor {
     public PlayerFish(SwimmyFish game) {
         this.game = game;
         region = game.atlas.findRegion("player fish");
-        setBounds(game.camera.viewportWidth + region.getRegionWidth() * 2, game.camera.viewportHeight - region.getRegionY() / 2f, region.getRegionWidth(),
+        setBounds(region.getRegionWidth() * 2,
+                  game.camera.viewportHeight - region.getRegionY() / 2f, region.getRegionWidth(),
                   region.getRegionHeight());
         setOrigin(getWidth() / 2, getHeight() / 2);
         swimSound = Gdx.audio.newSound(Gdx.files.internal("swim.wav"));
 
         movementSpeed = 200;
         yVelocity = 0;
-        System.out.println(getX());
     }
 
     public Circle getBounds() {
@@ -37,12 +37,11 @@ public class PlayerFish extends Actor {
     }
 
     public void increaseSpeed() {
-        movementSpeed += 4;
+        movementSpeed += 2;
     }
 
     public void update(float deltaTime) {
         move(deltaTime);
-        //rotate(deltaTime);
     }
 
     private void move(float deltaTime) {
@@ -56,20 +55,6 @@ public class PlayerFish extends Actor {
         }
         if (getY() > game.viewport.getWorldHeight() - 75) {
             yVelocity *= 0.25f * deltaTime;
-        }
-    }
-
-    private void rotate(float deltaTime) {
-        if (yVelocity < 0) {
-            setRotation(getRotation() - 480 * deltaTime);
-            if (getRotation() < -80) {
-                setRotation(-80);
-            }
-        } else {
-            setRotation(getRotation() + 320 * deltaTime * 2);
-            if (getRotation() > 60) {
-                setRotation(60);
-            }
         }
     }
 

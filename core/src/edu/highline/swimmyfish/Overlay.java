@@ -2,14 +2,13 @@ package edu.highline.swimmyfish;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Overlay extends Actor {
     private final SwimmyFish game;
     private final Sprite sprite;
 
-    public Overlay(SwimmyFish game, GameScreen gameScreen) {
+    public Overlay(SwimmyFish game) {
         this.game = game;
         sprite = game.atlas.createSprite("white overlay");
         sprite.setY(0);

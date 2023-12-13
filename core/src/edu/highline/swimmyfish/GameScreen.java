@@ -5,49 +5,29 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
     public final SwimmyFish game;
+    private final Sound deathSound;
     public Stage gameStage;
     public Stage menuStage;
-    public final InputMultiplexer inputMultiplexer;
-    private GameWorld world;
+    public InputMultiplexer inputMultiplexer;
     public Overlay overlay;
     public InputProcessor startInputProcessor;
-    public InputProcessor gameInputProcessor;
+    public InputProcessor playingInputProcessor;
     public InputProcessor gameOverInputProcessor;
     public GameOver gameOver;
     public Start start;
-    private final Sound deathSound;
+    private GameWorld world;
     private boolean paused;
 
     public GameScreen(final SwimmyFish game) {
         this.game = game;
-        gameStage = new Stage(this.game.viewport);
-        menuStage = new Stage(this.game.viewport);
-        inputMultiplexer = new InputMultiplexer();
-        world = new GameWorld(game, this);
-        inputMultiplexer.addProcessor(startInputProcessor);
-        inputMultiplexer.addProcessor(gameInputProcessor);
-        inputMultiplexer.addProcessor(gameOverInputProcessor);
-        Gdx.input.setInputProcessor(inputMultiplexer);
-
-        gameOver = new GameOver(this.game);
-        gameOver.setVisible(false);
-        menuStage.addActor(gameOver);
-
-        start = new Start(game, new CountdownCallback() {
-            @Override
-            public void onFinish() {
-                setState(State.PLAYING);
-            }
-        });
-        menuStage.addActor(start);
 
         deathSound = Gdx.audio.newSound(Gdx.files.internal("death.wav"));
-
-        paused = true;
 
         setState(State.START);
     }
@@ -55,28 +35,65 @@ public class GameScreen implements Screen {
     public void setState(State state) {
         switch (state) {
             case START:
+                if (world != null) {
+                    world.dispose();
+                }
+                if (gameOver != null) {
+                    gameOver.dispose();
+                }
+                if (gameStage != null) {
+                    gameStage.dispose();
+                }
+                if (menuStage != null) {
+                    menuStage.dispose();
+                }
+
+                gameStage = new Stage(this.game.viewport);
+                menuStage = new Stage(this.game.viewport);
+                inputMultiplexer = new InputMultiplexer();
                 world = new GameWorld(game, this);
-                overlay.setVisible(false);
+                inputMultiplexer.addProcessor(startInputProcessor);
+                inputMultiplexer.addProcessor(playingInputProcessor);
+                inputMultiplexer.addProcessor(gameOverInputProcessor);
+                Gdx.input.setInputProcessor(inputMultiplexer);
+
+                gameOver = new GameOver(this.game);
+                menuStage.addActor(gameOver);
+
+                start = new Start(game, () -> setState(State.PLAYING));
+                menuStage.addActor(start);
+
+                paused = true;
+                world = new GameWorld(game, this);
+                start.setVisible(true);
+                world.score.setVisible(false);
+                overlay.setVisible(true);
                 gameOver.setVisible(false);
                 inputMultiplexer.setProcessors(startInputProcessor);
-                paused = false;
                 break;
             case PLAYING:
-                gameOver.setVisible(false);
+                for (int i = 0; i < world.obstacles.size; i++) {
+                    ObstacleFishPair obstacle = world.obstacles.get(i);
+                    obstacle.getTopFish().setVisible(true);
+                    obstacle.getBottomFish().setVisible(true);
+                }
+
+                paused = false;
                 start.setVisible(false);
-                inputMultiplexer.setProcessors(gameInputProcessor);
+                world.score.setVisible(true);
+                overlay.setVisible(false);
+                gameOver.setVisible(false);
+                inputMultiplexer.setProcessors(playingInputProcessor);
                 break;
             case GAME_OVER:
-                showGameOverView();
+                paused = true;
+                deathSound.play();
+                start.setVisible(false);
+                overlay.setVisible(true);
+                gameOver.setVisible(true);
+                inputMultiplexer.setProcessors(gameOverInputProcessor);
                 break;
         }
-    }
-
-    public void showGameOverView() {
-        deathSound.play();
-        pause();
-        gameOver.setVisible(true);
-        inputMultiplexer.setProcessors(gameOverInputProcessor);
     }
 
     public boolean isPaused() {
@@ -84,17 +101,18 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void show() {
-        paused = false;
-    }
+    public void show() {}
 
     @Override
     public void render(float deltaTime) {
+        ScreenUtils.clear(new Color(0xEBF9FCff));
+
         if (!paused) {
             world.update(deltaTime);
         }
 
         gameStage.draw();
+        menuStage.act();
         menuStage.draw();
     }
 

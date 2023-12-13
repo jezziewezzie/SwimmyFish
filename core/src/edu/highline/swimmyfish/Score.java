@@ -62,7 +62,7 @@ public class Score extends Actor {
     public void draw(Batch batch, float ignoredParentAlpha) {
         float y = game.camera.position.y + (game.camera.viewportHeight / 2) -
                   numbers.get(0).getRegionHeight() * 1.25f;
-        float x = game.camera.position.x - getWidth() / 2;
+        float x = game.camera.position.x - getWidth() / 2f;
 
         for (int i = 0; i < digits.size(); i++) {
             digits.get(i).setPosition(x + i * digits.get(i).getWidth(), y);
